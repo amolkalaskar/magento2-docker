@@ -103,6 +103,10 @@ RUN pecl install -o -f \
   xmlrpc-1.0.0RC3 \
   yaml
 
+
+
+RUN apt-get update \
+    && apt-get install -y default-mysql-client
 #RUN curl -L https://packages.blackfire.io/gpg.key | gpg --dearmor > blackfire.io-archive-keyring.gpg \
 #  && install -o root -g root -m 644 blackfire.io-archive-keyring.gpg /etc/apt/trusted.gpg.d/ \
 #  && echo "deb http://packages.blackfire.io/debian any main" | tee /etc/apt/sources.list.d/blackfire.list \
@@ -126,7 +130,7 @@ COPY etc/php-gnupg.ini /usr/local/etc/php/conf.d/gnupg.ini
 
 RUN groupadd -g 2000 magento && useradd -g 2000 -u 2000 -d ${MAGENTO_ROOT} -s /bin/bash magento
 
-COPY docker-entrypoint.sh /docker-entrypoint.sh
+COPY ./docker-entrypoint.sh /docker-entrypoint.sh
 RUN ["chmod", "+x", "/docker-entrypoint.sh"]
 
 RUN mkdir -p ${MAGENTO_ROOT}
@@ -135,7 +139,7 @@ VOLUME ${MAGENTO_ROOT}
 
 RUN chown -R magento:magento /usr/local /var/www /var/log /usr/local/etc/php/conf.d ${MAGENTO_ROOT}
 
-ENTRYPOINT ["/docker-entrypoint.sh"]
+ENTRYPOINT ["docker-entrypoint.sh"]
 
 WORKDIR ${MAGENTO_ROOT}
 
